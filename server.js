@@ -52,6 +52,13 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Serve static files (uploaded images)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Debug: Log environment variables (without sensitive data)
+console.log('🔍 Environment Debug:');
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`PORT: ${process.env.PORT}`);
+console.log(`MONGODB_URI exists: ${!!process.env.MONGODB_URI}`);
+console.log(`MONGODB_URI starts with: ${process.env.MONGODB_URI ? process.env.MONGODB_URI.substring(0, 20) + '...' : 'undefined'}`);
+
 // Database connection
 mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
