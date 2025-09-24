@@ -27,19 +27,32 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS configuration
+// CORS configuration - dynamic and secure for dev/prod
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? [
-        'https://joedev-recipe-app.vercel.app',
-        'https://*.vercel.app' // Allow all Vercel preview deployments
-      ]
-    : [
-        'http://localhost:3000', 
-        'http://127.0.0.1:3000',
-        'https://joedev-recipe-app.vercel.app' // Also allow in development
-      ],
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    // Allow localhost, vercel, and your production domains
+    const allowed = [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      /\.vercel\.app$/,
+      'https://joedev-recipe-app.vercel.app',
+      'https://recipe-app-backend-wz8c.onrender.com'
+    ];
+    if (
+      allowed.some(o =>
+        typeof o === 'string' ? o === origin : o.test(origin)
+      )
+    ) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
+  optionsSuccessStatus: 200
 }));
 
 // Logging
