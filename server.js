@@ -30,8 +30,15 @@ app.use(limiter);
 // CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://yourdomain.com'] // Replace with your frontend domain
-    : ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    ? [
+        'https://joedev-recipe-app.vercel.app',
+        'https://*.vercel.app' // Allow all Vercel preview deployments
+      ]
+    : [
+        'http://localhost:3000', 
+        'http://127.0.0.1:3000',
+        'https://joedev-recipe-app.vercel.app' // Also allow in development
+      ],
   credentials: true
 }));
 
